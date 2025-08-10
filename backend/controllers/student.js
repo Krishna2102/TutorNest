@@ -12,6 +12,12 @@ const getProfile = async (req, res) => {
       phone: s.phone,
       dateOfBirth: s.dateOfBirth,
       location: s.location,
+      educationLevel: s.educationLevel,
+      class: s.class,
+      degree: s.degree,
+      schoolName: s.schoolName,
+      universityName: s.universityName,
+      institution: s.institution,
       preferredSubjects: s.preferredSubjects,
       avatarUrl: s.avatarUrl,
       createdAt: s.createdAt,
@@ -27,7 +33,20 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const updates = {};
-    const allowed = ['fullName', 'phone', 'dateOfBirth', 'location', 'preferredSubjects', 'avatarUrl'];
+    const allowed = [
+      'fullName', 
+      'phone', 
+      'dateOfBirth', 
+      'location', 
+      'educationLevel',
+      'class',
+      'degree',
+      'schoolName',
+      'universityName',
+      'institution',
+      'preferredSubjects', 
+      'avatarUrl'
+    ];
     for (const key of allowed) {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }

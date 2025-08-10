@@ -20,6 +20,12 @@ const sanitizeStudent = (s) => ({
   phone: s.phone,
   dateOfBirth: s.dateOfBirth,
   location: s.location,
+  educationLevel: s.educationLevel,
+  class: s.class,
+  degree: s.degree,
+  schoolName: s.schoolName,
+  universityName: s.universityName,
+  institution: s.institution,
   preferredSubjects: s.preferredSubjects,
   avatarUrl: s.avatarUrl,
   isEmailVerified: s.isEmailVerified,
@@ -56,6 +62,12 @@ const studentRegistration = async (req, res) => {
       phone, // optional
       dateOfBirth, // ISO or yyyy-mm-dd
       location,
+      educationLevel,
+      class: classGrade,
+      degree,
+      schoolName,
+      universityName,
+      institution,
       preferredSubjects, // array of strings
     } = req.body;
 
@@ -63,7 +75,7 @@ const studentRegistration = async (req, res) => {
       return res.status(400).json({ error: 'fullName, email and password are required' });
     }
 
-            if (!validator.isEmail(email)) {
+    if (!validator.isEmail(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
@@ -76,11 +88,17 @@ const studentRegistration = async (req, res) => {
 
     const student = new Student({
       fullName,
-                email,
+      email,
       password, // hashed by pre-save hook
       phone: phone || '',
       dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
       location: location || '',
+      educationLevel: educationLevel || 'school',
+      class: classGrade || '',
+      degree: degree || '',
+      schoolName: schoolName || '',
+      universityName: universityName || '',
+      institution: institution || '',
       preferredSubjects: Array.isArray(preferredSubjects) ? preferredSubjects : [],
     });
 

@@ -16,3 +16,4 @@ router.get('/teachers', listTeachers);
 router.post('/teachers/:id/rate', rateTeacher);
 
 module.exports = router;
+

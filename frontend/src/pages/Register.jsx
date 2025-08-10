@@ -16,6 +16,12 @@ const Register = () => {
   // Student-specific
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [location, setLocation] = useState('')
+  const [educationLevel, setEducationLevel] = useState('school')
+  const [classGrade, setClassGrade] = useState('Grade 10')
+  const [degree, setDegree] = useState('Bachelor of Science')
+  const [schoolName, setSchoolName] = useState('')
+  const [universityName, setUniversityName] = useState('')
+  const [institution, setInstitution] = useState('')
   const [preferredSubjects, setPreferredSubjects] = useState([])
 
   // Teacher-specific
@@ -53,6 +59,12 @@ const Register = () => {
           phone,
           dateOfBirth,
           location,
+          educationLevel,
+          class: classGrade,
+          degree,
+          schoolName,
+          universityName,
+          institution,
           preferredSubjects,
         }
         const data = await apiRequest('/auth/register/student', { method: 'POST', body })
@@ -126,7 +138,7 @@ const Register = () => {
                 <div>
                   <label className="block text-sm font-medium text-stone-700">Email Address</label>
                   <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
-                  <p className="mt-1 text-xs text-stone-500">We’ll send a verification link to this email</p>
+                  <p className="mt-1 text-xs text-stone-500">We'll send a verification link to this email</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-stone-700">Password</label>
@@ -153,6 +165,79 @@ const Register = () => {
                     <input value={location} onChange={(e)=>setLocation(e.target.value)} placeholder="e.g., Nairobi, Kenya" className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
                   </div>
                 </div>
+                
+                {/* Education Level */}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-stone-700">Education Level</label>
+                  <select value={educationLevel} onChange={(e)=>setEducationLevel(e.target.value)} className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500">
+                    <option value="school">School</option>
+                    <option value="university">University</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Institution based on Education Level */}
+                {educationLevel === 'school' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-stone-700">School Name</label>
+                    <input value={schoolName} onChange={(e)=>setSchoolName(e.target.value)} placeholder="e.g., St. Mary's High School" className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
+                  </div>
+                )}
+
+                {educationLevel === 'university' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-stone-700">University Name</label>
+                    <input value={universityName} onChange={(e)=>setUniversityName(e.target.value)} placeholder="e.g., University of Nairobi" className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
+                  </div>
+                )}
+
+                {educationLevel === 'other' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-stone-700">Institution Name</label>
+                    <input value={institution} onChange={(e)=>setInstitution(e.target.value)} placeholder="e.g., Technical Institute" className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
+                  </div>
+                )}
+
+                {/* Class or Degree based on Education Level */}
+                {educationLevel === 'school' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-stone-700">Class/Grade</label>
+                    <select value={classGrade} onChange={(e)=>setClassGrade(e.target.value)} className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500">
+                      <option value="Grade 1">Grade 1</option>
+                      <option value="Grade 2">Grade 2</option>
+                      <option value="Grade 3">Grade 3</option>
+                      <option value="Grade 4">Grade 4</option>
+                      <option value="Grade 5">Grade 5</option>
+                      <option value="Grade 6">Grade 6</option>
+                      <option value="Grade 7">Grade 7</option>
+                      <option value="Grade 8">Grade 8</option>
+                      <option value="Grade 9">Grade 9</option>
+                      <option value="Grade 10">Grade 10</option>
+                      <option value="Grade 11">Grade 11</option>
+                      <option value="Grade 12">Grade 12</option>
+                      <option value="A-Level">A-Level</option>
+                      <option value="IB">International Baccalaureate</option>
+                    </select>
+                  </div>
+                )}
+
+                {educationLevel === 'university' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-stone-700">Degree</label>
+                    <select value={degree} onChange={(e)=>setDegree(e.target.value)} className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500">
+                      <option value="Bachelor of Science">Bachelor of Science</option>
+                      <option value="Bachelor of Arts">Bachelor of Arts</option>
+                      <option value="Bachelor of Engineering">Bachelor of Engineering</option>
+                      <option value="Bachelor of Commerce">Bachelor of Commerce</option>
+                      <option value="Master of Science">Master of Science</option>
+                      <option value="Master of Arts">Master of Arts</option>
+                      <option value="Master of Business Administration">Master of Business Administration</option>
+                      <option value="PhD">PhD</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-stone-700">Preferred Subjects</label>
                   <div className="mt-2 grid sm:grid-cols-2 md:grid-cols-3 gap-2">

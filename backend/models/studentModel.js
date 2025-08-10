@@ -31,6 +31,31 @@ const studentSchema = new mongoose.Schema(
       type: String,
       default: '', // e.g., "Nairobi, Kenya"
     },
+    educationLevel: {
+      type: String,
+      enum: ['school', 'university', 'other'],
+      default: 'school',
+    },
+    class: {
+      type: String,
+      default: '', // e.g., "Grade 10", "Class 12", "A-Level"
+    },
+    degree: {
+      type: String,
+      default: '', // e.g., "Bachelor of Science", "Master of Arts"
+    },
+    schoolName: {
+      type: String,
+      default: '', // School name for school students
+    },
+    universityName: {
+      type: String,
+      default: '', // University name for university students
+    },
+    institution: {
+      type: String,
+      default: '', // Generic institution name for other education levels
+    },
     preferredSubjects: {
       type: [String],
       default: [],

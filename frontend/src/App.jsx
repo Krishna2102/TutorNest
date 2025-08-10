@@ -9,6 +9,8 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Chat from './pages/Chat.jsx'
 import Video from './pages/Video.jsx'
+import Teachers from './pages/Teachers.jsx'
+import Courses from './pages/Courses.jsx'
 import StudentProfile from './student/Student_profile.jsx'
 import TeacherProfile from './teacher/Teacher_profille.jsx'
 
@@ -18,6 +20,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/teachers" element={<Teachers />} />
+        <Route path="/courses" element={<Courses />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/discussion" element={<Discussion />} />
         <Route path="/login" element={<Login />} />
