@@ -4,7 +4,7 @@ import { apiRequest } from '../lib/api'
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('')
   const [minRate, setMinRate] = useState('')
@@ -12,128 +12,72 @@ const Teachers = () => {
   const navigate = useNavigate()
 
   const subjects = [
-    'Mathematics', 'Science', 'Programming', 'English', 'Geography', 
+    'Mathematics', 'Science', 'Programming', 'English', 'Geography',
     'Arts', 'History', 'Physics', 'Chemistry', 'Biology'
   ]
-
-  // Mock teachers data for demonstration
-  const mockTeachers = [
-    {
-      id: 1,
-      fullName: 'Dr. Sarah Johnson',
-      qualification: 'PhD in Mathematics',
-      experienceYears: 8,
-      subjectsTaught: ['Mathematics', 'Physics'],
-      hourlyRate: 45,
-      rating: 4.8,
-      totalReviews: 127,
-      profilePictureUrl: '',
-      bio: 'Experienced mathematics educator with expertise in calculus and algebra. Passionate about making complex concepts accessible to all students.',
-      location: 'New York, USA'
-    },
-    {
-      id: 2,
-      fullName: 'Prof. Michael Chen',
-      qualification: 'Master of Science in Computer Science',
-      experienceYears: 12,
-      subjectsTaught: ['Programming', 'Mathematics'],
-      hourlyRate: 55,
-      rating: 4.9,
-      totalReviews: 203,
-      profilePictureUrl: '',
-      bio: 'Senior software engineer turned educator. Specializes in Python, JavaScript, and data structures.',
-      location: 'San Francisco, USA'
-    },
-    {
-      id: 3,
-      fullName: 'Ms. Emily Rodriguez',
-      qualification: 'Bachelor of Arts in English Literature',
-      experienceYears: 6,
-      subjectsTaught: ['English', 'History'],
-      hourlyRate: 35,
-      rating: 4.7,
-      totalReviews: 89,
-      profilePictureUrl: '',
-      bio: 'Literature enthusiast with a passion for creative writing and critical analysis. Helps students develop strong communication skills.',
-      location: 'Los Angeles, USA'
-    },
-    {
-      id: 4,
-      fullName: 'Dr. James Wilson',
-      qualification: 'PhD in Physics',
-      experienceYears: 15,
-      subjectsTaught: ['Physics', 'Chemistry'],
-      hourlyRate: 60,
-      rating: 4.6,
-      totalReviews: 156,
-      profilePictureUrl: '',
-      bio: 'Research physicist with extensive teaching experience. Makes physics concepts engaging and understandable.',
-      location: 'Boston, USA'
-    },
-    {
-      id: 5,
-      fullName: 'Ms. Aisha Patel',
-      qualification: 'Master of Education',
-      experienceYears: 7,
-      subjectsTaught: ['Biology', 'Science'],
-      hourlyRate: 40,
-      rating: 4.8,
-      totalReviews: 94,
-      profilePictureUrl: '',
-      bio: 'Dedicated biology teacher with a focus on hands-on learning and real-world applications.',
-      location: 'Chicago, USA'
-    }
-  ]
-
-  useEffect(() => {
-    // In a real app, this would fetch from the API
-    // fetchTeachers()
-    setTeachers(mockTeachers)
-    setLoading(false)
-  }, [])
 
   const fetchTeachers = async () => {
     try {
       setLoading(true)
+      setError('')
+
       const params = new URLSearchParams()
       if (selectedSubject) params.append('subject', selectedSubject)
       if (minRate) params.append('minRate', minRate)
       if (maxRate) params.append('maxRate', maxRate)
 
-      const data = await apiRequest(`/student/teachers?${params}`, { method: 'GET' })
-      setTeachers(data)
+  const data = await apiRequest(`/teachers?${params.toString()}`, { method: 'GET' })
+
+      // Map MongoDB _id to id for frontend
+      const formatted = data.map(t => ({
+  id: t._id,
+  fullName: t.fullName,
+  qualification: t.qualification,
+  experienceYears: t.experienceYears,
+  subjectsTaught: t.subjectsTaught || [],
+  hourlyRate: t.hourlyRate,
+  rating: t.rating || 0,
+  totalReviews: t.totalReviews || 0,
+  profilePictureUrl: t.profilePictureUrl || '', // use backend avatar field
+  bio: t.bio || '', // if you want to add a bio field in backend later
+  location: t.location || '' // if you add location to teacher in backend
+}))
+
+
+      setTeachers(formatted)
     } catch (err) {
       console.error('Failed to fetch teachers:', err)
-      setError('Failed to load teachers')
+      setError('Failed to load teachers. Please try again later.')
     } finally {
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    fetchTeachers()
+  }, [])
+
   const handleChat = (teacherId) => {
-    // Navigate to chat page with teacher
     navigate(`/chat?teacher=${teacherId}`)
   }
 
   const handleBookSession = (teacherId) => {
-    // Navigate to booking page
     navigate(`/booking?teacher=${teacherId}`)
   }
 
-  const filteredTeachers = teachers.filter(teacher => {
-    if (selectedSubject && !teacher.subjectsTaught.includes(selectedSubject)) return false
-    if (minRate && teacher.hourlyRate < Number(minRate)) return false
-    if (maxRate && teacher.hourlyRate > Number(maxRate)) return false
+  // Filtering is also handled on backend, but you can keep this as safety
+  const filteredTeachers = teachers.filter(t => {
+    if (selectedSubject && !t.subjectsTaught.includes(selectedSubject)) return false
+    if (minRate && t.hourlyRate < Number(minRate)) return false
+    if (maxRate && t.hourlyRate > Number(maxRate)) return false
     return true
   })
 
   if (loading) {
     return (
       <main className="min-h-[calc(100vh-4rem)] bg-orange-50 text-stone-800">
-        <div className="max-w-7xl mx-auto px-6 py-10">
-          <div className="flex items-center justify-center">
-            <div className="text-lg">Loading teachers...</div>
-          </div>
+        <div className="max-w-7xl mx-auto px-6 py-10 flex justify-center items-center">
+          <div className="text-lg">Loading teachers...</div>
         </div>
       </main>
     )
@@ -154,8 +98,8 @@ const Teachers = () => {
           <div className="grid md:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">Subject</label>
-              <select 
-                value={selectedSubject} 
+              <select
+                value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
                 className="w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
               >
@@ -167,9 +111,10 @@ const Teachers = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">Min Rate (USD)</label>
-              <input 
-                type="number" 
-                value={minRate} 
+              <input
+                type="number"
+                min="0"
+                value={minRate}
                 onChange={(e) => setMinRate(e.target.value)}
                 placeholder="0"
                 className="w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
@@ -177,16 +122,17 @@ const Teachers = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">Max Rate (USD)</label>
-              <input 
-                type="number" 
-                value={maxRate} 
+              <input
+                type="number"
+                min="0"
+                value={maxRate}
                 onChange={(e) => setMaxRate(e.target.value)}
                 placeholder="100"
                 className="w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div className="flex items-end">
-              <button 
+              <button
                 onClick={fetchTeachers}
                 className="w-full rounded-lg bg-orange-600 px-4 py-2 text-white font-semibold hover:bg-orange-700"
               >
@@ -196,7 +142,7 @@ const Teachers = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
           <div className="mb-6 rounded-lg bg-red-100 text-red-800 px-4 py-3 text-sm">
             {error}
@@ -207,7 +153,7 @@ const Teachers = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTeachers.map(teacher => (
             <div key={teacher.id} className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6 hover:shadow-lg transition-shadow">
-              {/* Teacher Header */}
+              {/* Header */}
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-16 h-16 rounded-full bg-orange-200 flex items-center justify-center text-xl font-bold text-orange-700 ring-2 ring-orange-200">
                   {teacher.fullName.charAt(0)}
@@ -230,7 +176,7 @@ const Teachers = () => {
                 </div>
               </div>
 
-              {/* Teacher Details */}
+              {/* Details */}
               <div className="space-y-3 mb-4">
                 <p className="text-sm text-stone-700">{teacher.bio}</p>
                 <div className="flex items-center gap-2 text-sm text-stone-600">
@@ -256,15 +202,15 @@ const Teachers = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Buttons */}
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => handleChat(teacher.id)}
                   className="flex-1 rounded-lg bg-orange-600 px-3 py-2 text-white text-sm font-medium hover:bg-orange-700"
                 >
                   Chat
                 </button>
-                <button 
+                <button
                   onClick={() => handleBookSession(teacher.id)}
                   className="flex-1 rounded-lg bg-white px-3 py-2 text-orange-700 text-sm font-medium ring-1 ring-orange-200 hover:bg-orange-50"
                 >
@@ -276,14 +222,15 @@ const Teachers = () => {
         </div>
 
         {/* No Results */}
-        {filteredTeachers.length === 0 && (
+        {filteredTeachers.length === 0 && !loading && (
           <div className="text-center py-12">
             <p className="text-stone-600">No teachers found matching your criteria.</p>
-            <button 
+            <button
               onClick={() => {
                 setSelectedSubject('')
                 setMinRate('')
                 setMaxRate('')
+                fetchTeachers()
               }}
               className="mt-4 rounded-lg bg-orange-600 px-4 py-2 text-white font-semibold hover:bg-orange-700"
             >

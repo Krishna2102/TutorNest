@@ -19,19 +19,9 @@ const StudentProfile = () => {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [upcomingSessions, setUpcomingSessions] = useState([])
+  const [pastClasses, setPastClasses] = useState([])
   const navigate = useNavigate()
-
-  // Mock data for activity history and schedule
-  const [pastClasses] = useState([
-    { id: 1, subject: 'Mathematics', teacher: 'Ms. Amina', date: '2024-01-15', duration: '60 min', status: 'completed' },
-    { id: 2, subject: 'English', teacher: 'Dr. Kim', date: '2024-01-10', duration: '45 min', status: 'completed' },
-    { id: 3, subject: 'Physics', teacher: 'Mr. Daniel', date: '2024-01-05', duration: '90 min', status: 'completed' },
-  ])
-
-  const [upcomingSessions] = useState([
-    { id: 1, subject: 'Mathematics', teacher: 'Ms. Amina', date: '2024-01-20', time: '15:00', duration: '60 min' },
-    { id: 2, subject: 'English', teacher: 'Dr. Kim', date: '2024-01-22', time: '16:30', duration: '45 min' },
-  ])
 
   // Fetch student profile data
   const fetchProfile = async () => {
@@ -58,8 +48,34 @@ const StudentProfile = () => {
     }
   }
 
+  // Fetch upcoming sessions and past classes
+  const fetchSessions = async () => {
+    try {
+      // Fetch upcoming sessions
+      const upcomingData = await apiRequest('/student/upcoming-sessions', { method: 'GET' })
+      setUpcomingSessions(upcomingData || [])
+      
+      // Fetch past classes
+      const pastData = await apiRequest('/student/past-classes', { method: 'GET' })
+      setPastClasses(pastData || [])
+    } catch (err) {
+      console.error('Failed to fetch sessions:', err)
+      // Use mock data as fallback
+      setUpcomingSessions([
+        { id: 1, subject: 'Mathematics', teacher: 'Ms. Amina', date: '2024-01-20', time: '15:00', duration: '60 min' },
+        { id: 2, subject: 'English', teacher: 'Dr. Kim', date: '2024-01-22', time: '16:30', duration: '45 min' },
+      ])
+      setPastClasses([
+        { id: 1, subject: 'Mathematics', teacher: 'Ms. Amina', date: '2024-01-15', duration: '60 min', status: 'completed' },
+        { id: 2, subject: 'English', teacher: 'Dr. Kim', date: '2024-01-10', duration: '45 min', status: 'completed' },
+        { id: 3, subject: 'Physics', teacher: 'Mr. Daniel', date: '2024-01-05', duration: '90 min', status: 'completed' },
+      ])
+    }
+  }
+
   useEffect(() => {
     fetchProfile()
+    fetchSessions()
   }, [])
 
   const handleSaveChanges = async () => {

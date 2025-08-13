@@ -32,6 +32,14 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    headline: {
+      type: String,
+      default: '',
+    },
+    bio: {
+      type: String,
+      default: '',
+    },
     experienceYears: {
       type: Number,
       default: 0,

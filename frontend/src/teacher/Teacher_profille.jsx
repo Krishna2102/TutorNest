@@ -12,28 +12,84 @@ const TeacherProfile = () => {
   const [loggingOut, setLoggingOut] = useState(false)
   const navigate = useNavigate()
 
-  // Mock data for teaching history and schedule
-  const [teachingHistory] = useState([
-    { id: 1, student: 'Aisha', subject: 'Mathematics', date: '2024-01-15', duration: '60 min', status: 'completed' },
-    { id: 2, student: 'Daniel', subject: 'Physics', date: '2024-01-12', duration: '90 min', status: 'completed' },
-    { id: 3, student: 'Rina', subject: 'Mathematics', date: '2024-01-10', duration: '45 min', status: 'completed' },
-  ])
+  const [upcomingSessions, setUpcomingSessions] = useState([])
+  const [teachingHistory, setTeachingHistory] = useState([])
 
-  const [upcomingSessions] = useState([
-    { id: 1, student: 'Aisha', subject: 'Mathematics', date: '2024-01-20', time: '15:00', duration: '60 min' },
-    { id: 2, student: 'Daniel', subject: 'Physics', date: '2024-01-22', time: '16:30', duration: '90 min' },
-  ])
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user')
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData))
-      } catch (e) {
-        console.error('Failed to parse user data:', e)
+  // Fetch teacher profile data
+  const fetchProfile = async () => {
+    try {
+      const data = await apiRequest('/teacher/me', { method: 'GET' })
+      setUser(data)
+      
+      // Set form fields from API data
+      setHeadline(data.headline || 'Certified Math Tutor with 5+ years of experience')
+      setBio(data.bio || 'I help students build strong fundamentals and exam confidence.')
+      setSubjects(data.subjectsTaught || ['Mathematics', 'Physics'])
+      setHourlyRate(data.hourlyRate || 20)
+    } catch (err) {
+      console.error('Failed to fetch profile:', err)
+      // Fallback to localStorage data
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        try {
+          setUser(JSON.parse(userData))
+        } catch (e) {
+          console.error('Failed to parse user data:', e)
+        }
       }
     }
+  }
+
+  // Fetch upcoming sessions and teaching history
+  const fetchSessions = async () => {
+    try {
+      // Fetch upcoming sessions
+      const upcomingData = await apiRequest('/teacher/upcoming-sessions', { method: 'GET' })
+      setUpcomingSessions(upcomingData || [])
+      
+      // Fetch teaching history
+      const historyData = await apiRequest('/teacher/teaching-history', { method: 'GET' })
+      setTeachingHistory(historyData || [])
+    } catch (err) {
+      console.error('Failed to fetch sessions:', err)
+      // Use mock data as fallback
+      setUpcomingSessions([
+        { id: 1, student: 'Aisha', subject: 'Mathematics', date: '2024-01-20', time: '15:00', duration: '60 min' },
+        { id: 2, student: 'Daniel', subject: 'Physics', date: '2024-01-22', time: '16:30', duration: '90 min' },
+      ])
+      setTeachingHistory([
+        { id: 1, student: 'Aisha', subject: 'Mathematics', date: '2024-01-15', duration: '60 min', status: 'completed' },
+        { id: 2, student: 'Daniel', subject: 'Physics', date: '2024-01-12', duration: '90 min', status: 'completed' },
+        { id: 3, student: 'Rina', subject: 'Mathematics', date: '2024-01-10', duration: '45 min', status: 'completed' },
+      ])
+    }
+  }
+
+  useEffect(() => {
+    fetchProfile()
+    fetchSessions()
   }, [])
+
+  const handleSaveChanges = async () => {
+    try {
+      const updateData = {
+        headline,
+        bio,
+        subjectsTaught: subjects,
+        hourlyRate,
+      }
+
+      await apiRequest('/teacher/me', { 
+        method: 'PUT', 
+        body: updateData 
+      })
+
+      // Refresh profile data
+      await fetchProfile()
+    } catch (err) {
+      console.error('Failed to update profile:', err)
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -123,7 +179,12 @@ const TeacherProfile = () => {
                 <input type="number" value={hourlyRate} onChange={(e)=>setHourlyRate(Number(e.target.value))} min={0} className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
               </div>
               <div className="pt-2">
-                <button className="rounded-lg bg-orange-600 px-4 py-2 text-white font-semibold hover:bg-orange-700">Save changes</button>
+                <button 
+                  onClick={handleSaveChanges}
+                  className="rounded-lg bg-orange-600 px-4 py-2 text-white font-semibold hover:bg-orange-700"
+                >
+                  Save changes
+                </button>
               </div>
             </section>
           </div>

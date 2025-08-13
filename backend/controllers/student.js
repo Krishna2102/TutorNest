@@ -1,3 +1,13 @@
+// GET /api/student/:id - public student info by ID
+const getStudentById = async (req, res) => {
+  try {
+    const student = await require('../models/studentModel').findById(req.params.id).select('-password');
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+    res.json(student);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch student' });
+  }
+};
 const Student = require('../models/studentModel');
 const Teacher = require('../models/teacherModel');
 
@@ -129,4 +139,5 @@ module.exports = {
   deleteProfile,
   listTeachers,
   rateTeacher,
+   getStudentById,
 };
