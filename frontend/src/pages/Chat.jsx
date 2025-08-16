@@ -52,9 +52,9 @@ const Chat = () => {
         // Fetch names for contacts
         const idsArr = Array.from(contactIds);
         const names = await Promise.all(idsArr.map(async (id) => {
-          // Try public students endpoint first (avoids /api/student auth middleware)
+          // Try student first
           try {
-            const student = await apiRequest(`/students/${id}`);
+            const student = await apiRequest(`/student/${id}`);
             if (student && student.fullName) {
               return { id, name: student.fullName };
             }

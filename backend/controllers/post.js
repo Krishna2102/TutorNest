@@ -38,6 +38,10 @@ const createPost = async (req, res) => {
   try {
     const { title, body, imageUrl, tags } = req.body;
     
+    console.log('Creating post with user:', req.user);
+    console.log('User ID:', req.user._id || req.user.id);
+    console.log('User role:', req.user.role);
+    
     if (!title || !body) {
       return res.status(400).json({ error: 'Title and body are required' });
     }
@@ -49,12 +53,13 @@ const createPost = async (req, res) => {
       title,
       body,
       author: req.user.fullName,
-      authorId: req.user.id,
+      authorId: req.user._id || req.user.id,
       authorModel,
       imageUrl: imageUrl || '',
       tags: tags || []
     });
 
+    console.log('Post object created:', post);
     await post.save();
     
     const populatedPost = await Post.findById(post._id)
@@ -62,6 +67,7 @@ const createPost = async (req, res) => {
     
     res.status(201).json(populatedPost);
   } catch (error) {
+    console.error('Error creating post:', error);
     res.status(500).json({ error: 'Failed to create post' });
   }
 };

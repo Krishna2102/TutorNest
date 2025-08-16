@@ -12,7 +12,7 @@ const Teachers = () => {
   const navigate = useNavigate()
 
   const subjects = [
-    'Mathematics', 'Science', 'Programming', 'English', 'Geography',
+    'Mathematics', 'Science', 'Programming', 'English', 'Geography', 
     'Arts', 'History', 'Physics', 'Chemistry', 'Biology'
   ]
 
