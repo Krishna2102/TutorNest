@@ -1,3 +1,5 @@
+const Chat = require('../models/chatModel');
+
 // Get all chat messages in the system
 exports.getAllChats = async (req, res) => {
 	try {
@@ -7,7 +9,6 @@ exports.getAllChats = async (req, res) => {
 		res.status(500).json({ error: 'Failed to fetch all chats' });
 	}
 };
-const Chat = require('../models/chatModel');
 
 // Send a message
 exports.sendMessage = async (req, res) => {
@@ -34,5 +35,30 @@ exports.getMessages = async (req, res) => {
 		res.json(messages);
 	} catch (err) {
 		res.status(500).json({ error: 'Failed to fetch messages' });
+	}
+};
+
+// Get user information for chat participants
+exports.getUserInfo = async (req, res) => {
+	try {
+		const { userId } = req.params;
+		
+		// Try to find user in Student collection first
+		const Student = require('../models/studentModel');
+		let user = await Student.findById(userId).select('fullName email');
+		
+		if (!user) {
+			// Try Teacher collection
+			const Teacher = require('../models/teacherModel');
+			user = await Teacher.findById(userId).select('fullName email');
+		}
+		
+		if (user) {
+			res.json({ success: true, user });
+		} else {
+			res.status(404).json({ success: false, error: 'User not found' });
+		}
+	} catch (err) {
+		res.status(500).json({ success: false, error: 'Failed to fetch user info' });
 	}
 };

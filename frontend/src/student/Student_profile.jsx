@@ -21,6 +21,7 @@ const StudentProfile = () => {
   const [success, setSuccess] = useState('')
   const [upcomingSessions, setUpcomingSessions] = useState([])
   const [pastClasses, setPastClasses] = useState([])
+  const [enrolledCourses, setEnrolledCourses] = useState([])
   const navigate = useNavigate()
 
   // Fetch student profile data
@@ -73,9 +74,28 @@ const StudentProfile = () => {
     }
   }
 
+  // Fetch enrolled courses
+  const fetchEnrolledCourses = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:5000/api/courses/student/courses', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await response.json()
+      if (data.success) {
+        setEnrolledCourses(data.courses)
+      }
+    } catch (error) {
+      console.error('Error fetching enrolled courses:', error)
+    }
+  }
+
   useEffect(() => {
     fetchProfile()
     fetchSessions()
+    fetchEnrolledCourses()
   }, [])
 
   const handleSaveChanges = async () => {
@@ -182,6 +202,42 @@ const StudentProfile = () => {
             {success}
           </div>
         )}
+
+        {/* Enrolled Courses Section */}
+        <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
+          <h3 className="text-lg font-semibold text-stone-900 mb-4">My Enrolled Courses</h3>
+          {enrolledCourses.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {enrolledCourses.map(course => (
+                <div key={course._id} className="bg-orange-50 rounded-lg p-4 ring-1 ring-orange-200 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/course/${course._id}`)}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-2xl">{course.image}</div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-stone-900 text-sm">{course.title}</h4>
+                      <p className="text-xs text-stone-600">by {course.teacher?.fullName}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-stone-700 mb-3 line-clamp-2">{course.description}</p>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-600">{course.duration}</span>
+                    <span className="text-orange-600 font-medium">Click to watch</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-2">📚</div>
+              <p className="text-stone-600 mb-4">You haven't enrolled in any courses yet</p>
+              <button
+                onClick={() => navigate('/courses')}
+                className="bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700"
+              >
+                Browse Courses
+              </button>
+            </div>
+          )}
+        </section>
 
         {/* Two Column Layout */}
         <div className="grid lg:grid-cols-2 gap-6">

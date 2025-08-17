@@ -52,4 +52,64 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { auth, authorize };
+// Verify teacher middleware
+const verifyTeacher = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    // Check if token is blacklisted
+    if (tokenBlacklist && tokenBlacklist.has(token)) {
+      return res.status(401).json({ message: 'Token has been revoked' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.TOKEN_KEY || 'dev-secret');
+    
+    const teacher = await Teacher.findById(decoded.userId).select('-password');
+    
+    if (!teacher) {
+      return res.status(403).json({ message: 'Access denied. Teachers only.' });
+    }
+
+    req.user = teacher;
+    req.user.role = 'teacher';
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid' });
+  }
+};
+
+// Verify student middleware
+const verifyStudent = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    // Check if token is blacklisted
+    if (tokenBlacklist && tokenBlacklist.has(token)) {
+      return res.status(401).json({ message: 'Token has been revoked' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.TOKEN_KEY || 'dev-secret');
+    
+    const student = await Student.findById(decoded.userId).select('-password');
+    
+    if (!student) {
+      return res.status(403).json({ message: 'Access denied. Students only.' });
+    }
+
+    req.user = student;
+    req.user.role = 'student';
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid' });
+  }
+};
+
+module.exports = { auth, authorize, verifyTeacher, verifyStudent };

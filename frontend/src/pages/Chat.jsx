@@ -22,8 +22,11 @@ const Chat = () => {
   useEffect(() => {
     const fetchChatsAndNames = async () => {
       try {
+        console.log('Fetching chats for user:', currentUserId);
         const data = await apiRequest('/chat/all');
+        console.log('Chats data:', data);
         setChats(data);
+        
         // Find unique contacts (other party in each chat)
         const contactMap = {};
         const contactIds = new Set();
@@ -39,6 +42,7 @@ const Chat = () => {
             };
           }
         });
+        
         // If teacherParam exists and not in contacts, add it
         if (teacherParam && !contactMap[teacherParam]) {
           contactMap[teacherParam] = {
@@ -51,24 +55,25 @@ const Chat = () => {
         }
         // Fetch names for contacts
         const idsArr = Array.from(contactIds);
+        console.log('Contact IDs to fetch:', idsArr);
+        
         const names = await Promise.all(idsArr.map(async (id) => {
-          // Try student first
           try {
-            const student = await apiRequest(`/student/${id}`);
-            if (student && student.fullName) {
-              return { id, name: student.fullName };
+            console.log(`Fetching user info for ID: ${id}`);
+            const response = await apiRequest(`/chat/user/${id}`);
+            console.log(`User info response for ${id}:`, response);
+            
+            if (response && response.success && response.user && response.user.fullName) {
+              return { id, name: response.user.fullName };
             }
-          } catch {}
-          // Try teacher
-          try {
-            const teacher = await apiRequest(`/teachers/${id}`);
-            if (teacher && teacher.fullName) {
-              return { id, name: teacher.fullName };
-            }
-          } catch {}
+          } catch (error) {
+            console.error(`Failed to fetch user info for ${id}:`, error);
+          }
           // Fallback
           return { id, name: 'Unknown User' };
         }));
+        
+        console.log('Fetched names:', names);
         names.forEach(({ id, name }) => {
           if (contactMap[id]) contactMap[id].name = name;
         });
@@ -80,7 +85,8 @@ const Chat = () => {
           setActiveContact(Object.values(contactMap)[0].id);
         }
       } catch (err) {
-        // handle error
+        console.error('Error fetching chats:', err);
+        // You could show a toast notification here
       }
     };
     fetchChatsAndNames();
@@ -115,7 +121,8 @@ const Chat = () => {
       setChats(prev => [...prev, newMsg]);
       setMessage('');
     } catch (err) {
-      // handle error
+      console.error('Error sending message:', err);
+      // You could show a toast notification here
     }
   };
 
@@ -132,7 +139,7 @@ const Chat = () => {
               <li key={c.id}>
                 <button onClick={()=>setActiveContact(c.id)} className={`w-full text-left px-4 py-3 hover:bg-orange-50 ${activeContact === c.id ? 'bg-orange-50' : ''}`}>
                   <div className="flex items-center justify-between">
-                    <p className="font-medium text-stone-900 line-clamp-1">{c.name !== c.id ? c.name : 'Unknown User'}</p>
+                    <p className="font-medium text-stone-900 line-clamp-1">{c.name || 'Unknown User'}</p>
                   </div>
                   <p className="text-sm text-stone-600 line-clamp-1">{c.lastMessage}</p>
                 </button>

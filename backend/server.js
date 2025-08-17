@@ -39,6 +39,7 @@ app.use('/api/student', require('./routes/studentRoutes'));
 app.use('/api/teacher', require('./routes/teacherRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/posts', require('./routes/postRoutes'));
+app.use('/api/courses', require('./routes/coursesRoutes'));
 
 // Socket.io for real-time chat
 io.on('connection', (socket) => {

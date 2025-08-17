@@ -11,6 +11,8 @@ import Chat from './pages/Chat.jsx'
 import Video from './pages/Video.jsx'
 import Teachers from './pages/Teachers.jsx'
 import Courses from './pages/Courses.jsx'
+import TeacherCourses from './pages/TeacherCourses.jsx'
+import CourseVideo from './pages/CourseVideo.jsx'
 import StudentProfile from './student/Student_profile.jsx'
 import TeacherProfile from './teacher/Teacher_profille.jsx'
 
@@ -28,6 +30,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/video" element={<Video />} />
+        <Route path="/teacher/courses" element={<TeacherCourses />} />
+        <Route path="/course/:courseId" element={<CourseVideo />} />
         <Route path="/student/profile" element={<StudentProfile />} />
         <Route path="/teacher/profile" element={<TeacherProfile />} />
       </Routes>
