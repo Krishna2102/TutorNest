@@ -7,7 +7,8 @@ const {
   getTeacherCourses,
   getStudentCourses,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  unenrollFromCourse
 } = require("../controllers/courses");
 
 const { verifyTeacher, verifyStudent } = require("../middleware/authMiddleware");
@@ -26,6 +27,7 @@ router.delete("/:id", verifyTeacher, deleteCourse);
 // Student routes
 router.get("/student/courses", verifyStudent, getStudentCourses);
 router.post("/:id/enroll", verifyStudent, enrollInCourse);
+router.delete("/:id/unenroll", verifyStudent, unenrollFromCourse);
 router.get("/:id/content", verifyStudent, getCourseContent);
 
 module.exports = router;

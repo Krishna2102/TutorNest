@@ -147,6 +147,28 @@ const StudentProfile = () => {
     }
   }
 
+  const handleUnenroll = async (courseId) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/unenroll`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await response.json()
+      if (data.success) {
+        setEnrolledCourses(enrolledCourses.filter(course => course._id !== courseId))
+        setSuccess('Course unenrolled successfully!')
+      } else {
+        setError('Failed to unenroll from course')
+      }
+    } catch (error) {
+      console.error('Error unenrolling from course:', error)
+      setError('Failed to unenroll from course')
+    }
+  }
+
   if (loading) {
     return <div className="min-h-screen bg-orange-50 flex items-center justify-center">Loading...</div>
   }
@@ -171,19 +193,8 @@ const StudentProfile = () => {
         {/* Profile Header */}
         <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
           <div className="flex items-center gap-6">
-            {user.avatarUrl ? (
-              <img 
-                src={user.avatarUrl} 
-                alt={user.fullName} 
-                className="w-24 h-24 rounded-full object-cover ring-2 ring-orange-200"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-orange-200 flex items-center justify-center text-2xl font-bold text-orange-700 ring-2 ring-orange-200">
-                {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'S'}
-              </div>
-            )}
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-stone-900">{user.fullName || 'Student Name'}</h2>
+              <h2 className="text-2xl font-bold text-stone-900">{user.fullName || 'Student Name'}</h2>
               <p className="text-stone-600">{user.email}</p>
               {user.phone && <p className="text-sm text-stone-500">{user.phone}</p>}
               {user.location && <p className="text-sm text-stone-500">{user.location}</p>}
@@ -209,18 +220,33 @@ const StudentProfile = () => {
           {enrolledCourses.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {enrolledCourses.map(course => (
-                <div key={course._id} className="bg-orange-50 rounded-lg p-4 ring-1 ring-orange-200 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/course/${course._id}`)}>
+                <div key={course._id} className="bg-orange-50 rounded-lg p-4 ring-1 ring-orange-200 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="text-2xl">{course.image}</div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-stone-900 text-sm">{course.title}</h4>
                       <p className="text-xs text-stone-600">by {course.teacher?.fullName}</p>
                     </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUnenroll(course._id);
+                      }}
+                      className="text-red-600 hover:text-red-800 text-xs font-medium"
+                      title="Unenroll from course"
+                    >
+                      ✕
+                    </button>
                   </div>
+                  
                   <p className="text-xs text-stone-700 mb-3 line-clamp-2">{course.description}</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-stone-600">{course.duration}</span>
-                    <span className="text-orange-600 font-medium">Click to watch</span>
+                    <button
+                      onClick={() => navigate(`/course/${course._id}`)}
+                      className="text-orange-600 font-medium hover:text-orange-800"
+                    >
+                      Watch videos
+                    </button>
                   </div>
                 </div>
               ))}

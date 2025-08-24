@@ -14,6 +14,7 @@ const TeacherProfile = () => {
 
   const [upcomingSessions, setUpcomingSessions] = useState([])
   const [teachingHistory, setTeachingHistory] = useState([])
+  const [teacherCourses, setTeacherCourses] = useState([])
 
   // Fetch teacher profile data
   const fetchProfile = async () => {
@@ -65,9 +66,28 @@ const TeacherProfile = () => {
     }
   }
 
+  // Fetch teacher's courses
+  const fetchTeacherCourses = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:5000/api/courses/teacher/courses', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await response.json()
+      if (data.success) {
+        setTeacherCourses(data.courses)
+      }
+    } catch (error) {
+      console.error('Error fetching teacher courses:', error)
+    }
+  }
+
   useEffect(() => {
     fetchProfile()
     fetchSessions()
+    fetchTeacherCourses()
   }, [])
 
   const handleSaveChanges = async () => {
@@ -148,6 +168,66 @@ const TeacherProfile = () => {
               )}
             </div>
           </div>
+        </section>
+
+        {/* My Courses Section */}
+        <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-stone-900">My Launched Courses</h3>
+            <button
+              onClick={() => navigate('/teacher/courses')}
+              className="bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700"
+            >
+              Manage Courses
+            </button>
+          </div>
+          {teacherCourses.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {teacherCourses.map(course => (
+                <div key={course._id} className="bg-orange-50 rounded-lg p-4 ring-1 ring-orange-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 mb-3">
+                    {course.image && course.image.startsWith('http') ? (
+                      <img 
+                        src={course.image} 
+                        alt={course.title}
+                        className="w-12 h-12 object-cover rounded-lg"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${course.image && course.image.startsWith('http') ? 'hidden' : ''}`}>
+                      {course.image || '📚'}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-stone-900 text-sm">{course.title}</h4>
+                      <p className="text-xs text-stone-600">{course.category} • {course.level}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-stone-700 mb-3 line-clamp-2">{course.description}</p>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-600">{course.duration}</span>
+                    <span className="text-orange-600 font-medium">${course.price}</span>
+                  </div>
+                  <div className="mt-2 text-xs text-stone-500">
+                    {course.studentsEnrolled?.length || 0} students enrolled
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-2">📚</div>
+              <p className="text-stone-600 mb-4">You haven't launched any courses yet</p>
+              <button
+                onClick={() => navigate('/teacher/courses')}
+                className="bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700"
+              >
+                Create Your First Course
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Two Column Layout */}

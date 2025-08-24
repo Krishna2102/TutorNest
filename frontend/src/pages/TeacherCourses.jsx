@@ -106,14 +106,102 @@ const TeacherCourses = () => {
       })
       const data = await response.json()
       if (data.success) {
-        setShowEditModal(false)
-        setSelectedCourse(null)
+        closeEditModal()
         fetchTeacherCourses()
       }
     } catch (error) {
       console.error('Error updating course:', error)
     }
     setLoading(false)
+  }
+
+  // Functions for edit modal
+  const addVideoToEdit = () => {
+    if (newVideo.title && newVideo.url) {
+      setSelectedCourse(prev => ({
+        ...prev,
+        videos: [...(prev.videos || []), { ...newVideo }]
+      }))
+      setNewVideo({ title: '', url: '', duration: '' })
+    }
+  }
+
+  const removeVideoFromEdit = (index) => {
+    setSelectedCourse(prev => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addSyllabusItemToEdit = () => {
+    if (newSyllabusItem.trim()) {
+      setSelectedCourse(prev => ({
+        ...prev,
+        syllabus: [...(prev.syllabus || []), newSyllabusItem.trim()]
+      }))
+      setNewSyllabusItem('')
+    }
+  }
+
+  const removeSyllabusItemFromEdit = (index) => {
+    setSelectedCourse(prev => ({
+      ...prev,
+      syllabus: prev.syllabus.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addRequirementToEdit = () => {
+    if (newRequirement.trim()) {
+      setSelectedCourse(prev => ({
+        ...prev,
+        requirements: [...(prev.requirements || []), newRequirement.trim()]
+      }))
+      setNewRequirement('')
+    }
+  }
+
+  const removeRequirementFromEdit = (index) => {
+    setSelectedCourse(prev => ({
+      ...prev,
+      requirements: prev.requirements.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addOutcomeToEdit = () => {
+    if (newOutcome.trim()) {
+      setSelectedCourse(prev => ({
+        ...prev,
+        outcomes: [...(prev.outcomes || []), newOutcome.trim()]
+      }))
+      setNewOutcome('')
+    }
+  }
+
+  const removeOutcomeFromEdit = (index) => {
+    setSelectedCourse(prev => ({
+      ...prev,
+      outcomes: prev.outcomes.filter((_, i) => i !== index)
+    }))
+  }
+
+  // Function to clean up corrupted image URLs
+  const cleanupImageUrl = () => {
+    if (selectedCourse.image && selectedCourse.image.includes(' ')) {
+      setSelectedCourse(prev => ({
+        ...prev,
+        image: '📚'
+      }))
+    }
+  }
+
+  // Function to close edit modal and reset form
+  const closeEditModal = () => {
+    setShowEditModal(false)
+    setSelectedCourse(null)
+    setNewVideo({ title: '', url: '', duration: '' })
+    setNewSyllabusItem('')
+    setNewRequirement('')
+    setNewOutcome('')
   }
 
   const handleDeleteCourse = async (courseId) => {
@@ -236,7 +324,20 @@ const TeacherCourses = () => {
           {courses.map(course => (
             <div key={course._id} className="bg-white rounded-2xl p-6 shadow-lg">
               <div className="flex items-start gap-4 mb-4">
-                <div className="text-4xl">{course.image}</div>
+                {course.image && course.image.startsWith('http') && !course.image.includes(' ') ? (
+                  <img 
+                    src={course.image} 
+                    alt={course.title}
+                    className="w-16 h-16 object-cover rounded-lg"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div className={`w-16 h-16 rounded-lg flex items-center justify-center text-2xl ${course.image && course.image.startsWith('http') && !course.image.includes(' ') ? 'hidden' : ''}`}>
+                  {course.image && !course.image.startsWith('http') ? course.image : '📚'}
+                </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-stone-900">{course.title}</h3>
                   <p className="text-sm text-stone-600">{course.category} • {course.level}</p>
@@ -254,7 +355,7 @@ const TeacherCourses = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
-                    setSelectedCourse(course)
+                    setSelectedCourse({...course})
                     setShowEditModal(true)
                   }}
                   className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-orange-200"
@@ -360,14 +461,17 @@ const TeacherCourses = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-2">Image Emoji</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Course Image</label>
                     <input
                       type="text"
                       value={newCourse.image}
                       onChange={(e) => setNewCourse(prev => ({ ...prev, image: e.target.value }))}
-                      placeholder="📚"
+                      placeholder="Image URL or emoji (e.g., 📚, 🔬, 💻)"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Use an emoji (📚) or paste an image URL (https://example.com/image.jpg)
+                    </p>
                   </div>
                 </div>
 
@@ -394,39 +498,68 @@ const TeacherCourses = () => {
                 {/* Videos Section */}
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold text-stone-900 mb-4">Course Videos</h3>
+                  <div className="bg-orange-50 p-4 rounded-lg mb-4">
+                    <p className="text-sm text-orange-800 mb-2">
+                      <strong>Video URL Format:</strong> Use YouTube, Vimeo, or direct video links
+                    </p>
+                    <p className="text-xs text-orange-700">
+                      • YouTube: https://www.youtube.com/watch?v=VIDEO_ID<br/>
+                      • YouTube Short: https://youtu.be/VIDEO_ID<br/>
+                      • Vimeo: https://vimeo.com/VIDEO_ID
+                    </p>
+                  </div>
                   <div className="grid md:grid-cols-3 gap-4 mb-4">
                     <input
                       type="text"
                       value={newVideo.title}
                       onChange={(e) => setNewVideo(prev => ({ ...prev, title: e.target.value }))}
-                      placeholder="Video title"
+                      placeholder="Video title (e.g., Introduction to Physics)"
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                     <input
                       type="text"
                       value={newVideo.url}
                       onChange={(e) => setNewVideo(prev => ({ ...prev, url: e.target.value }))}
-                      placeholder="Video URL"
+                      placeholder="Video URL (YouTube, Vimeo, etc.)"
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
+                    <input
+                      type="text"
+                      value={newVideo.duration}
+                      onChange={(e) => setNewVideo(prev => ({ ...prev, duration: e.target.value }))}
+                      placeholder="Duration (e.g., 15:30)"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex justify-center mb-4">
                     <button
                       onClick={addVideo}
-                      className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+                      disabled={!newVideo.title || !newVideo.url}
+                      className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                       Add Video
                     </button>
                   </div>
-                  {newCourse.videos.map((video, index) => (
-                    <div key={index} className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded">
-                      <span className="flex-1">{video.title}</span>
-                      <button
-                        onClick={() => removeVideo(index)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Remove
-                      </button>
+                  {newCourse.videos.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-stone-700">Added Videos:</h4>
+                      {newCourse.videos.map((video, index) => (
+                        <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{video.title}</p>
+                            <p className="text-xs text-stone-500">{video.url}</p>
+                            {video.duration && <p className="text-xs text-stone-500">Duration: {video.duration}</p>}
+                          </div>
+                          <button
+                            onClick={() => removeVideo(index)}
+                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
 
                 {/* Syllabus Section */}
@@ -550,7 +683,7 @@ const TeacherCourses = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-stone-900">Edit Course</h2>
                   <button
-                    onClick={() => setShowEditModal(false)}
+                    onClick={closeEditModal}
                     className="text-gray-400 hover:text-gray-600 text-2xl"
                   >
                     ×
@@ -597,6 +730,17 @@ const TeacherCourses = () => {
                   </div>
 
                   <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Duration</label>
+                    <input
+                      type="text"
+                      value={selectedCourse.duration}
+                      onChange={(e) => setSelectedCourse(prev => ({ ...prev, duration: e.target.value }))}
+                      placeholder="e.g., 8 weeks"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
                     <label className="block text-sm font-medium text-stone-700 mb-2">Price ($)</label>
                     <input
                       type="number"
@@ -604,6 +748,31 @@ const TeacherCourses = () => {
                       onChange={(e) => setSelectedCourse(prev => ({ ...prev, price: Number(e.target.value) }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Course Image</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={selectedCourse.image}
+                        onChange={(e) => setSelectedCourse(prev => ({ ...prev, image: e.target.value }))}
+                        placeholder="Image URL or emoji (e.g., 📚, 🔬, 💻)"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+                      {selectedCourse.image && selectedCourse.image.includes(' ') && (
+                        <button
+                          onClick={cleanupImageUrl}
+                          className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
+                          title="Clean up corrupted image URL"
+                        >
+                          🧹 Clean
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Use an emoji (📚) or paste an image URL (https://example.com/image.jpg)
+                    </p>
                   </div>
                 </div>
 
@@ -617,6 +786,176 @@ const TeacherCourses = () => {
                   />
                 </div>
 
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-stone-700 mb-2">Full Description</label>
+                  <textarea
+                    value={selectedCourse.fullDescription}
+                    onChange={(e) => setSelectedCourse(prev => ({ ...prev, fullDescription: e.target.value }))}
+                    rows="4"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Videos Section */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-stone-900 mb-4">Course Videos</h3>
+                  <div className="bg-orange-50 p-4 rounded-lg mb-4">
+                    <p className="text-sm text-orange-800 mb-2">
+                      <strong>Video URL Format:</strong> Use YouTube, Vimeo, or direct video links
+                    </p>
+                    <p className="text-xs text-orange-700">
+                      • YouTube: https://www.youtube.com/watch?v=VIDEO_ID<br/>
+                      • YouTube Short: https://youtu.be/VIDEO_ID<br/>
+                      • Vimeo: https://vimeo.com/VIDEO_ID
+                    </p>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4 mb-4">
+                    <input
+                      type="text"
+                      value={newVideo.title}
+                      onChange={(e) => setNewVideo(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Video title (e.g., Introduction to Physics)"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={newVideo.url}
+                      onChange={(e) => setNewVideo(prev => ({ ...prev, url: e.target.value }))}
+                      placeholder="Video URL (YouTube, Vimeo, etc.)"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={newVideo.duration}
+                      onChange={(e) => setNewVideo(prev => ({ ...prev, duration: e.target.value }))}
+                      placeholder="Duration (e.g., 15:30)"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex justify-center mb-4">
+                    <button
+                      onClick={addVideoToEdit}
+                      disabled={!newVideo.title || !newVideo.url}
+                      className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      Add Video
+                    </button>
+                  </div>
+                  {selectedCourse.videos.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-stone-700">Added Videos:</h4>
+                      {selectedCourse.videos.map((video, index) => (
+                        <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{video.title}</p>
+                            <p className="text-xs text-stone-500">{video.url}</p>
+                            {video.duration && <p className="text-xs text-stone-500">Duration: {video.duration}</p>}
+                          </div>
+                          <button
+                            onClick={() => removeVideoFromEdit(index)}
+                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Syllabus Section */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-stone-900 mb-4">Course Syllabus</h3>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      value={newSyllabusItem}
+                      onChange={(e) => setNewSyllabusItem(e.target.value)}
+                      placeholder="Add syllabus item"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <button
+                      onClick={addSyllabusItemToEdit}
+                      className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {selectedCourse.syllabus.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded">
+                      <span className="flex-1">{item}</span>
+                      <button
+                        onClick={() => removeSyllabusItemFromEdit(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Requirements Section */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-stone-900 mb-4">Requirements</h3>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      value={newRequirement}
+                      onChange={(e) => setNewRequirement(e.target.value)}
+                      placeholder="Add requirement"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <button
+                      onClick={addRequirementToEdit}
+                      className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {selectedCourse.requirements.map((req, index) => (
+                    <div key={index} className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded">
+                      <span className="flex-1">{req}</span>
+                      <button
+                        onClick={() => removeRequirementFromEdit(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Outcomes Section */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-stone-900 mb-4">Learning Outcomes</h3>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      value={newOutcome}
+                      onChange={(e) => setNewOutcome(e.target.value)}
+                      placeholder="Add learning outcome"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <button
+                      onClick={addOutcomeToEdit}
+                      className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {selectedCourse.outcomes.map((outcome, index) => (
+                    <div key={index} className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded">
+                      <span className="flex-1">{outcome}</span>
+                      <button
+                        onClick={() => removeOutcomeFromEdit(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="mt-8 flex gap-4">
                   <button
                     onClick={handleUpdateCourse}
@@ -626,7 +965,7 @@ const TeacherCourses = () => {
                     {loading ? 'Updating...' : 'Update Course'}
                   </button>
                   <button
-                    onClick={() => setShowEditModal(false)}
+                    onClick={closeEditModal}
                     className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300"
                   >
                     Cancel

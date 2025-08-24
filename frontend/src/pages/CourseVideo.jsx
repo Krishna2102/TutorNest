@@ -44,23 +44,31 @@ const CourseVideo = () => {
   }
 
   const getVideoEmbedUrl = (url) => {
+    if (!url) return null;
+    
     // Handle YouTube URLs
     if (url.includes('youtube.com/watch?v=')) {
-      const videoId = url.split('v=')[1]
-      return `https://www.youtube.com/embed/${videoId}`
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+      }
     }
     // Handle YouTube short URLs
     if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1]
-      return `https://www.youtube.com/embed/${videoId}`
+      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+      }
     }
     // Handle Vimeo URLs
     if (url.includes('vimeo.com/')) {
-      const videoId = url.split('vimeo.com/')[1]
-      return `https://player.vimeo.com/video/${videoId}`
+      const videoId = url.split('vimeo.com/')[1]?.split('/')[0];
+      if (videoId) {
+        return `https://player.vimeo.com/video/${videoId}`;
+      }
     }
-    // Return original URL if not recognized
-    return url
+    // Return null if not recognized
+    return null;
   }
 
   if (loading) {
@@ -108,14 +116,20 @@ const CourseVideo = () => {
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate('/student/profile')}
             className="flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
           >
             <span>←</span>
             <span>Back to Profile</span>
           </button>
           <div className="flex items-center gap-4">
-            <div className="text-4xl">{course.image}</div>
+            {course.image && (
+              <img 
+                src={course.image} 
+                alt={course.title}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+            )}
             <div>
               <h1 className="text-3xl font-bold text-stone-900">{course.title}</h1>
               <p className="text-stone-600">by {course.teacher?.fullName}</p>
@@ -130,19 +144,44 @@ const CourseVideo = () => {
               {selectedVideo ? (
                 <div>
                   <div className="aspect-video bg-black">
-                    <iframe
-                      src={getVideoEmbedUrl(selectedVideo.url)}
-                      title={selectedVideo.title}
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
+                    {getVideoEmbedUrl(selectedVideo.url) ? (
+                      <iframe
+                        src={getVideoEmbedUrl(selectedVideo.url)}
+                        title={selectedVideo.title}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="text-6xl mb-4">⚠️</div>
+                          <p className="text-lg mb-2">Video cannot be embedded</p>
+                          <p className="text-sm opacity-80">Please check the video URL format</p>
+                          {selectedVideo.url && (
+                            <a 
+                              href={selectedVideo.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-block mt-3 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                            >
+                              Watch on YouTube
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-stone-900 mb-2">{selectedVideo.title}</h2>
                     {selectedVideo.duration && (
                       <p className="text-stone-600">Duration: {selectedVideo.duration}</p>
+                    )}
+                    {selectedVideo.url && (
+                      <p className="text-sm text-stone-500 mt-2">
+                        Source: <a href={selectedVideo.url} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">{selectedVideo.url}</a>
+                      </p>
                     )}
                   </div>
                 </div>

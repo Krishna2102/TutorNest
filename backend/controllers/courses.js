@@ -71,6 +71,27 @@ const enrollInCourse = async (req, res) => {
   }
 };
 
+// Unenroll student from a course
+const unenrollFromCourse = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ error: "Course not found" });
+
+    if (!course.studentsEnrolled.includes(req.user.id)) {
+      return res.status(400).json({ error: "Not enrolled in this course" });
+    }
+
+    course.studentsEnrolled = course.studentsEnrolled.filter(
+      studentId => studentId.toString() !== req.user.id
+    );
+    await course.save();
+
+    res.json({ success: true, message: "Unenrolled successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
 // Get course videos (Only for enrolled students)
 const getCourseContent = async (req, res) => {
   try {
@@ -163,6 +184,7 @@ module.exports = {
   createCourse,
   getAllCourses,
   enrollInCourse,
+  unenrollFromCourse,
   getCourseContent,
   getTeacherCourses,
   getStudentCourses,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../lib/auth'
 
 const Courses = () => {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -10,6 +11,7 @@ const Courses = () => {
   const [isEnrolling, setIsEnrolling] = useState(false)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const { isAuthenticated, role } = useAuth()
 
   // Load courses and enrolled courses from API on component mount
   useEffect(() => {
@@ -110,8 +112,20 @@ const Courses = () => {
        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-stone-900">Explore Our Courses</h1>
-          <p className="mt-2 text-stone-600">Discover comprehensive learning programs designed to help you succeed</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-stone-900">Explore Our Courses</h1>
+              <p className="mt-2 text-stone-600">Discover comprehensive learning programs designed to help you succeed</p>
+            </div>
+            {isAuthenticated && role === 'teacher' && (
+              <button
+                onClick={() => navigate('/teacher/courses')}
+                className="bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+              >
+                Create Course
+              </button>
+            )}
+          </div>
         </div>
 
                  {/* Category Filters */}
@@ -148,7 +162,16 @@ const Courses = () => {
                              <div key={course._id} className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-4 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleViewDetails(course)}>
                 {/* Course Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="text-4xl">{course.image}</div>
+                {course.image?.startsWith("http") ? (
+  <img 
+    src={course.image} 
+    alt={course.title} 
+    className="w-16 h-16 object-cover rounded-lg"
+  />
+) : (
+  <div className="text-4xl">{course.image}</div>
+)}
+
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-stone-900">{course.title}</h3>
                     <p className="text-sm text-stone-600">by {course.teacher?.fullName || 'Unknown Teacher'}</p>
@@ -257,7 +280,16 @@ const Courses = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="text-5xl">{selectedCourse.image}</div>
+                {selectedCourse.image?.startsWith("http") ? (
+  <img 
+    src={selectedCourse.image} 
+    alt={selectedCourse.title} 
+    className="w-20 h-20 object-cover rounded-lg"
+  />
+) : (
+  <div className="text-5xl">{selectedCourse.image}</div>
+)}
+
                   <div>
                     <h2 className="text-2xl font-bold text-stone-900">{selectedCourse.title}</h2>
                     <p className="text-stone-600">by {selectedCourse.teacher?.fullName || 'Unknown Teacher'}</p>
@@ -327,7 +359,16 @@ const Courses = () => {
                  <div className="lg:col-span-1">
                   <div className="bg-orange-50 rounded-lg p-6 sticky top-6">
                     <div className="text-center mb-6">
-                      <div className="text-4xl mb-2">{selectedCourse.image}</div>
+                    {selectedCourse.image?.startsWith("http") ? (
+  <img 
+    src={selectedCourse.image} 
+    alt={selectedCourse.title} 
+    className="w-20 h-20 object-cover rounded-lg"
+  />
+) : (
+  <div className="text-5xl">{selectedCourse.image}</div>
+)}
+
                       <h3 className="text-xl font-bold text-stone-900">{selectedCourse.title}</h3>
                     </div>
 

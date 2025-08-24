@@ -104,6 +104,15 @@ const Navbar = () => {
             >
               Courses
             </NavLink>
+            {isAuthenticated && role === 'teacher' && (
+              <NavLink 
+                to="/teacher/courses" 
+                className={({isActive}) => `block px-3 py-2 rounded-md text-base font-medium ${isActive ? 'text-orange-700 bg-orange-50' : 'text-stone-700 hover:text-orange-700 hover:bg-orange-50'}`}
+                onClick={closeMobileMenu}
+              >
+                My Courses
+              </NavLink>
+            )}
             <NavLink 
               to="/about" 
               className={({isActive}) => `block px-3 py-2 rounded-md text-base font-medium ${isActive ? 'text-orange-700 bg-orange-50' : 'text-stone-700 hover:text-orange-700 hover:bg-orange-50'}`}
