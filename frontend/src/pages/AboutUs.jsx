@@ -2,61 +2,111 @@ import React from 'react'
 
 const AboutUs = () => {
   return (
-    <main className="min-h-screen bg-orange-50 text-stone-800">
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 text-stone-800">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-20">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
-            Empowering Education Through Technology
+      <section className="relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 text-white py-24">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-white/10 bg-opacity-20"></div>
+        </div>
+        <div className="relative max-w-6xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-orange-100 text-sm font-medium mb-8">
+            🌟 Trusted by 10,000+ students worldwide
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-8 leading-tight">
+            Empowering Education Through <span className="text-orange-200">Innovation</span>
           </h1>
-          <p className="text-xl md:text-2xl text-orange-100 max-w-3xl mx-auto leading-relaxed">
-            We're revolutionizing the way students learn by connecting them with expert tutors 
-            through our innovative online platform, making quality education accessible to everyone.
+          <p className="text-xl md:text-2xl text-orange-100 max-w-4xl mx-auto leading-relaxed mb-10">
+            🚀 We're revolutionizing the way students learn by connecting them with expert tutors 
+            through our innovative online platform, making quality education accessible to everyone, everywhere.
           </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+              <div className="text-2xl font-bold">98%</div>
+              <div className="text-sm text-orange-200">Success Rate</div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+              <div className="text-2xl font-bold">24/7</div>
+              <div className="text-sm text-orange-200">Support</div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+              <div className="text-2xl font-bold">50+</div>
+              <div className="text-sm text-orange-200">Countries</div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Our Story Section */}
-      <section className="py-16">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Our Story</h2>
-            <p className="text-lg text-stone-600 max-w-3xl mx-auto">
-              Founded in 2023, TutorNest emerged from a simple belief: every student deserves access to 
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-6">
+              📖 Our Journey
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-stone-900 to-orange-700 bg-clip-text text-transparent mb-6">Our Story</h2>
+            <p className="text-xl text-stone-600 max-w-4xl mx-auto leading-relaxed">
+              🌱 Founded in 2023, TutorNest emerged from a simple belief: every student deserves access to 
               exceptional educational support, regardless of their location or background.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-stone-900 mb-4">The Beginning</h3>
-              <p className="text-stone-700 leading-relaxed mb-4">
-                Our journey started when our founders, experienced educators themselves, recognized the 
-                growing gap between students who could afford private tutoring and those who couldn't. 
-                They saw how technology could bridge this divide and create opportunities for all learners.
-              </p>
-              <p className="text-stone-700 leading-relaxed">
-                What began as a small platform connecting local tutors with students has grown into a 
-                comprehensive educational ecosystem serving thousands of learners across multiple countries.
-              </p>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h3 className="text-3xl font-bold text-stone-900 flex items-center gap-3">
+                  🌟 The Beginning
+                </h3>
+                <p className="text-lg text-stone-700 leading-relaxed">
+                  Our journey started when our founders, experienced educators themselves, recognized the 
+                  growing gap between students who could afford private tutoring and those who couldn't. 
+                  They saw how technology could bridge this divide and create opportunities for all learners.
+                </p>
+                <p className="text-lg text-stone-700 leading-relaxed">
+                  What began as a small platform connecting local tutors with students has grown into a 
+                  comprehensive educational ecosystem serving thousands of learners across multiple countries.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl px-6 py-4 border border-blue-200">
+                  <div className="text-2xl font-bold text-blue-700">🎯 Mission</div>
+                  <div className="text-sm text-blue-600 mt-1">Accessible Education</div>
+                </div>
+                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl px-6 py-4 border border-green-200">
+                  <div className="text-2xl font-bold text-green-700">👁️ Vision</div>
+                  <div className="text-sm text-green-600 mt-1">Global Learning</div>
+                </div>
+              </div>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-2">10K+</div>
-                  <div className="text-sm text-stone-600">Students Helped</div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-10 shadow-2xl ring-1 ring-orange-200/50">
+              <h4 className="text-2xl font-bold text-center text-stone-900 mb-8">📊 Our Impact</h4>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-2xl">🎓</span>
+                  </div>
+                  <div className="text-4xl font-bold text-orange-600 mb-2">10K+</div>
+                  <div className="text-sm text-stone-600 font-medium">Students Helped</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-2">500+</div>
-                  <div className="text-sm text-stone-600">Expert Tutors</div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-2xl">👨‍🏫</span>
+                  </div>
+                  <div className="text-4xl font-bold text-blue-600 mb-2">500+</div>
+                  <div className="text-sm text-stone-600 font-medium">Expert Tutors</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-2">50+</div>
-                  <div className="text-sm text-stone-600">Subjects Covered</div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-2xl">📚</span>
+                  </div>
+                  <div className="text-4xl font-bold text-green-600 mb-2">50+</div>
+                  <div className="text-sm text-stone-600 font-medium">Subjects Covered</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-2">95%</div>
-                  <div className="text-sm text-stone-600">Success Rate</div>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-2xl">⭐</span>
+                  </div>
+                  <div className="text-4xl font-bold text-purple-600 mb-2">98%</div>
+                  <div className="text-sm text-stone-600 font-medium">Success Rate</div>
                 </div>
               </div>
             </div>

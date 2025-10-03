@@ -178,45 +178,87 @@ const StudentProfile = () => {
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-orange-50 text-stone-800">
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">
-        <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-stone-900">Student Profile</h1>
-            <p className="mt-1 text-stone-600">Manage your learning preferences</p>
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 text-stone-800">
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-8">
+        {/* Header */}
+        <section className="rounded-3xl bg-white/90 backdrop-blur-sm ring-1 ring-orange-200/50 p-8 shadow-xl flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-2xl">🎓</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-stone-900 to-orange-700 bg-clip-text text-transparent">
+                Student Dashboard
+              </h1>
+              <p className="text-lg text-stone-600">📚 Manage your learning journey and preferences</p>
+            </div>
           </div>
-          <button onClick={handleLogout} disabled={loggingOut} className="rounded-lg bg-orange-600 px-4 py-2 text-white font-semibold hover:bg-orange-700 disabled:opacity-60">
-            {loggingOut ? 'Logging out...' : 'Logout'}
+          <button 
+            onClick={handleLogout} 
+            disabled={loggingOut} 
+            className="rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 px-6 py-3 text-white font-bold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-60"
+          >
+            {loggingOut ? '🔄 Logging out...' : '🚪 Logout'}
           </button>
         </section>
 
         {/* Profile Header */}
-        <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
-          <div className="flex items-center gap-6">
+        <section className="rounded-3xl bg-white/90 backdrop-blur-sm ring-1 ring-orange-200/50 p-8 shadow-xl">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-blue-100">
+                {user?.fullName?.charAt(0) || '👤'}
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+                <span className="text-white text-xs">✓</span>
+              </div>
+            </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-stone-900">{user.fullName || 'Student Name'}</h2>
-              <p className="text-stone-600">{user.email}</p>
-              {user.phone && <p className="text-sm text-stone-500">{user.phone}</p>}
-              {user.location && <p className="text-sm text-stone-500">{user.location}</p>}
+              <h2 className="text-3xl font-bold text-stone-900 mb-2">{user?.fullName || 'Student Name'} 👋</h2>
+              <div className="space-y-2">
+                <p className="text-lg text-stone-600 flex items-center gap-2">
+                  📧 <span>{user?.email}</span>
+                </p>
+                {user?.phone && (
+                  <p className="text-stone-500 flex items-center gap-2">
+                    📱 <span>{user.phone}</span>
+                  </p>
+                )}
+                {user?.location && (
+                  <p className="text-stone-500 flex items-center gap-2">
+                    📍 <span>{user.location}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="bg-gradient-to-r from-orange-100 to-orange-200 rounded-2xl px-6 py-4 border border-orange-300">
+                <div className="text-2xl font-bold text-orange-700">Student</div>
+                <div className="text-sm text-orange-600">Active Learner</div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Error and Success Messages */}
         {error && (
-          <div className="rounded-lg bg-red-100 text-red-800 px-4 py-3 text-sm">
-            {error}
+          <div className="rounded-2xl bg-red-50 border border-red-200 text-red-700 px-6 py-4 text-sm flex items-center gap-2">
+            <span>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
         {success && (
-          <div className="rounded-lg bg-green-100 text-green-800 px-4 py-3 text-sm">
-            {success}
+          <div className="rounded-2xl bg-green-50 border border-green-200 text-green-700 px-6 py-4 text-sm flex items-center gap-2">
+            <span>✅</span>
+            <span>{success}</span>
           </div>
         )}
 
         {/* Enrolled Courses Section */}
-        <section className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
-          <h3 className="text-lg font-semibold text-stone-900 mb-4">My Enrolled Courses</h3>
+        <section className="rounded-3xl bg-white/90 backdrop-blur-sm ring-1 ring-orange-200/50 p-8 shadow-xl">
+          <h3 className="text-2xl font-bold text-stone-900 mb-6 flex items-center gap-3">
+            📚 <span>My Enrolled Courses</span>
+          </h3>
           {enrolledCourses.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {enrolledCourses.map(course => (

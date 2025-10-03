@@ -186,17 +186,7 @@ const TeacherProfile = () => {
               {teacherCourses.map(course => (
                 <div key={course._id} className="bg-orange-50 rounded-lg p-4 ring-1 ring-orange-200 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 mb-3">
-                    {course.image && course.image.startsWith('http') ? (
-                      <img 
-                        src={course.image} 
-                        alt={course.title}
-                        className="w-12 h-12 object-cover rounded-lg"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
+                    
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${course.image && course.image.startsWith('http') ? 'hidden' : ''}`}>
                       {course.image || '📚'}
                     </div>

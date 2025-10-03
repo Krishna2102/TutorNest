@@ -12,11 +12,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-6 pt-16 pb-8 md:pt-24 md:pb-16 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700 ring-1 ring-orange-200">Learn smarter, not harder</span>
-            <h1 className="mt-5 text-4xl md:text-5xl font-extrabold tracking-tight text-stone-900">
-              Find your perfect <span className="text-orange-600">Tutor</span> for any subject
+            <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight text-stone-900 leading-tight">
+              Find your perfect <span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">Tutor</span> for any subject
             </h1>
-            <p className="mt-4 text-lg text-stone-700 max-w-xl">
-              1-on-1 online lessons with vetted tutors. Flexible scheduling, transparent pricing, and results you can measure.
+            <p className="mt-6 text-xl text-stone-600 max-w-xl leading-relaxed">
+              🎯 1-on-1 online lessons with vetted tutors. Flexible scheduling, transparent pricing, and results you can measure.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#get-started" className="inline-flex items-center justify-center rounded-lg bg-orange-600 px-5 py-3 text-white font-semibold shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">

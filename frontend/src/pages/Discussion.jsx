@@ -213,38 +213,58 @@ const Discussion = () => {
   }
 
   return (
-    <main className="min-h-screen bg-orange-50 text-stone-800">
-      <section className="max-w-5xl mx-auto px-6 py-14">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-stone-900">Community Discussion</h1>
-        <p className="mt-2 text-lg text-stone-700">Post questions and share opinions or answers.</p>
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 text-stone-800">
+      <section className="max-w-6xl mx-auto px-6 py-16">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-6">
+            💬 Community Hub
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-stone-900 to-orange-700 bg-clip-text text-transparent mb-4">
+            Community Discussion
+          </h1>
+          <p className="text-xl text-stone-600 max-w-3xl mx-auto leading-relaxed">
+            🤝 Connect with fellow learners, share knowledge, ask questions, and help others succeed in their educational journey.
+          </p>
+          <div className="flex justify-center mt-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-full px-6 py-2 shadow-lg ring-1 ring-orange-200">
+              <span className="text-sm font-medium text-orange-700">
+                {posts.length} active discussions
+              </span>
+            </div>
+          </div>
+        </div>
 
         {error && (
-          <div className="mt-4 rounded-lg bg-red-100 text-red-800 px-4 py-3 text-sm">
-            {error}
+          <div className="mb-8 rounded-2xl bg-red-50 border border-red-200 text-red-700 px-6 py-4 text-sm flex items-center gap-2">
+            <span>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
 
         {/* Ask a question */}
-        <div className="mt-8 rounded-2xl bg-white/80 ring-1 ring-orange-200 p-6">
-          <h2 className="text-lg font-semibold text-stone-900">Ask a question</h2>
-          <form onSubmit={postQuestion} className="mt-4 grid gap-4">
+        <div className="mb-12 rounded-3xl bg-white/90 backdrop-blur-sm ring-1 ring-orange-200/50 p-8 shadow-xl">
+          <h2 className="text-2xl font-bold text-stone-900 mb-6 flex items-center gap-3">
+            ❓ <span>Ask a Question</span>
+          </h2>
+          <form onSubmit={postQuestion} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-stone-700">Title</label>
+              <label className="block text-sm font-semibold text-stone-700 mb-2">📝 Question Title</label>
               <input 
                 value={qTitle} 
                 onChange={(e)=>setQTitle(e.target.value)} 
-                placeholder="Summarize your question" 
-                className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" 
+                placeholder="What's your question? Be specific and clear..." 
+                className="w-full rounded-2xl border border-orange-200 bg-stone-50 px-4 py-3 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all duration-200" 
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-stone-700">Details</label>
+              <label className="block text-sm font-semibold text-stone-700 mb-2">📖 Question Details</label>
               <textarea 
                 value={qBody} 
                 onChange={(e)=>setQBody(e.target.value)} 
-                rows={4} 
-                placeholder="Provide context, what you tried, and where you're stuck" 
-                className="mt-1 w-full rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" 
+                rows={5} 
+                placeholder="Provide context, what you've tried, and where you're stuck. The more details, the better help you'll get!" 
+                className="w-full rounded-2xl border border-orange-200 bg-stone-50 px-4 py-3 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all duration-200 resize-none" 
               />
             </div>
             <div className="grid md:grid-cols-2 gap-4">

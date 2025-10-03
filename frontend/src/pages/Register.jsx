@@ -100,31 +100,43 @@ const Register = () => {
   }
 
   return (
-    <main className="min-h-screen bg-orange-50 text-stone-800">
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        <div className="rounded-2xl bg-white/80 ring-1 ring-orange-200 p-8 shadow">
-          <h1 className="text-2xl font-bold text-stone-900">Create your account</h1>
-          <p className="mt-1 text-stone-600">Choose your role and complete the required details</p>
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 text-stone-800">
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="rounded-3xl bg-white/90 backdrop-blur-sm ring-1 ring-orange-200/50 p-10 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-2xl">✨</span>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-stone-900 to-orange-700 bg-clip-text text-transparent">
+              Join TutorNest
+            </h1>
+            <p className="mt-2 text-xl text-stone-600">🚀 Start your learning or teaching journey today</p>
+          </div>
 
           {/* Role Switcher */}
-          <div className="mt-6 grid grid-cols-2 gap-2 bg-orange-50 p-1 rounded-lg ring-1 ring-orange-200">
+          <div className="mb-8 grid grid-cols-2 gap-4 bg-stone-50 p-3 rounded-3xl ring-1 ring-orange-200">
             <button
               type="button"
               onClick={() => setRole('student')}
-              className={`rounded-md py-2 font-medium ${role === 'student' ? 'bg-white text-orange-700 ring-1 ring-orange-300' : 'text-stone-700 hover:text-orange-700'}`}
+              className={`rounded-2xl py-4 font-bold transition-all duration-200 ${role === 'student' ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg scale-105' : 'text-stone-700 hover:text-orange-700 hover:bg-white hover:scale-102'}`}
             >
-              Student
+              👨‍🎓 I'm a Student
             </button>
             <button
               type="button"
               onClick={() => setRole('teacher')}
-              className={`rounded-md py-2 font-medium ${role === 'teacher' ? 'bg-white text-orange-700 ring-1 ring-orange-300' : 'text-stone-700 hover:text-orange-700'}`}
+              className={`rounded-2xl py-4 font-bold transition-all duration-200 ${role === 'teacher' ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg scale-105' : 'text-stone-700 hover:text-orange-700 hover:bg-white hover:scale-102'}`}
             >
-              Teacher
+              👨‍🏫 I'm a Teacher
             </button>
           </div>
 
-          {error && <div className="mt-4 rounded-lg bg-orange-100 text-orange-800 px-3 py-2 text-sm">{error}</div>}
+          {error && (
+            <div className="mb-6 rounded-2xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-8">
             {/* Basic Info */}
